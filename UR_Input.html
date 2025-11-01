@@ -13,15 +13,15 @@
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyD4tKDu4g2T_7Hd7PXS85Nv_380JPPsPAI",
-  authDomain: "projectur-db.firebaseapp.com",
-  databaseURL: "https://projectur-db-default-rtdb.firebaseio.com",
-  projectId: "projectur-db",
-  storageBucket: "projectur-db.firebasestorage.app",
-  messagingSenderId: "473897594575",
-  appId: "1:473897594575:web:f0aa9fffda993a62c111ba",
-  measurementId: "G-Y6KB1JK1XW"
-};
+      apiKey: "AIzaSyD4tKDu4g2T_7Hd7PXS85Nv_380JPPsPAI",
+      authDomain: "projectur-db.firebaseapp.com",
+      databaseURL: "https://projectur-db-default-rtdb.firebaseio.com",
+      projectId: "projectur-db",
+      storageBucket: "projectur-db.appspot.com",  // <-- fixed typo here
+      messagingSenderId: "473897594575",
+      appId: "1:473897594575:web:f0aa9fffda993a62c111ba",
+      measurementId: "G-Y6KB1JK1XW"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -41,9 +41,7 @@
       }
     };
   </script>
-
   <style>
-    /* Base */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
@@ -54,8 +52,6 @@
       flex-direction: column;
       align-items: center;
     }
-
-    /* Header */
     header {
       width: 100%;
       max-width: 960px;
@@ -72,8 +68,6 @@
       font-size: 1.2rem;
       color: #718093;
     }
-
-    /* Card container */
     main {
       width: 100%;
       max-width: 700px;
@@ -87,14 +81,12 @@
       flex-direction: column;
       align-items: stretch;
     }
-
     label {
       font-size: 1.1rem;
       margin-bottom: 10px;
       color: #2f3640;
       font-weight: 600;
     }
-
     textarea {
       width: 100%;
       min-height: 140px;
@@ -111,7 +103,6 @@
       box-shadow: 0 0 10px rgba(76, 209, 55, 0.3);
       outline: none;
     }
-
     button {
       background: linear-gradient(135deg, #4cd137, #44bd32);
       color: #fff;
@@ -132,8 +123,55 @@
       transform: translateY(0);
       box-shadow: 0 5px 12px rgba(0,0,0,0.1);
     }
-
     #response {
       margin-top: 25px;
       width: 100%;
-      min
+      min-height: 40px;
+      background: #f5f6fa;
+      border-radius: 8px;
+      padding: 10px;
+      color: #44bd32;
+      font-weight: 600;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>일상어 기반 UR로봇 시뮬레이터</h1>
+    <p>Project By. InDawn(S.J Yoon)</p>
+  </header>
+  <main>
+    <form id="ur-form" autocomplete="off" onsubmit="return false;">
+      <label for="ur-instruction">명령을 입력하세요:</label>
+      <textarea id="ur-instruction" placeholder="예: 박스를 집어 오른쪽으로 옮겨놓으세요."></textarea>
+      <button type="submit" id="send-btn">명령 전송</button>
+    </form>
+    <div id="response"></div>
+  </main>
+  <script type="module">
+    document.getElementById('ur-form').onsubmit = async function() {
+      const textarea = document.getElementById('ur-instruction');
+      const responseDiv = document.getElementById('response');
+      const text = textarea.value.trim();
+      if (!text) {
+        responseDiv.textContent = "명령을 입력해주세요.";
+        responseDiv.style.color = "#e84118";
+        return false;
+      }
+      responseDiv.textContent = "전송 중...";
+      responseDiv.style.color = "#718093";
+      const id = await window.sendToFirebase(text);
+      if (id) {
+        responseDiv.textContent = `명령이 전송되었습니다 (ID: ${id})`;
+        responseDiv.style.color = "#44bd32";
+        textarea.value = "";
+      } else {
+        responseDiv.textContent = "명령 전송에 실패했습니다. 다시 시도해주세요.";
+        responseDiv.style.color = "#e84118";
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
