@@ -1,154 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Istaroth Console</title>
+  <title>일상어 명령 입력기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #1a1a1d, #3a3a40);
-      color: #fff;
+      font-family: "Noto Sans KR", sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #eee;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
     }
 
-    .container {
-      background: #222;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      width: 400px;
+    header {
       text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 1.2s ease;
     }
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #00e0ff, #a020f0);
+    header h1 {
+      font-size: 2.5em;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
     }
 
-    p {
-      color: #ccc;
-      font-size: 0.9em;
-      margin-bottom: 20px;
+    header p {
+      font-size: 1.05em;
+      color: #bbb;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      background: #333;
-      color: white;
+    main {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      animation: slideUp 1.2s ease;
+    }
+
+    main label {
+      display: block;
       font-size: 1em;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+
+    main textarea {
+      width: 100%;
+      min-height: 120px;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 1em;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      resize: vertical;
       outline: none;
-      transition: background 0.2s;
+      transition: all 0.3s;
     }
 
-    input:focus {
-      background: #444;
+    main textarea:focus {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px #00c6ff;
     }
 
-    button {
+    main button {
+      margin-top: 20px;
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #00e0ff, #a020f0);
+      border-radius: 10px;
+      font-size: 1.1em;
+      font-weight: 600;
       color: white;
-      font-size: 1em;
-      font-weight: bold;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
 
-    button:hover {
-      opacity: 0.85;
+    main button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
     }
 
-    .status {
-      margin-top: 15px;
-      font-weight: 500;
+    main button:active {
+      transform: translateY(0);
+    }
+
+    #status {
+      margin-top: 20px;
       font-size: 0.95em;
-      color: #aaa;
+      min-height: 24px;
     }
 
-    .success {
-      color: #00ffb3;
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      color: #999;
+      font-size: 0.9em;
     }
 
-    .fail {
-      color: #ff5c5c;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>Istaroth Console</h1>
-    <p>Send debug commands directly to Firebase</p>
+  <header>
+    <h1>일상어 명령 입력기</h1>
+    <p>일상어 명령을 UR로봇으로 실행합니다.</p>
+  </header>
 
-    <input type="text" id="userInput" placeholder="Enter command..." />
-    <button id="sendBtn">Send</button>
+  <main>
+    <label for="command">유효한 텍스트 프롬프트를 입력해주세요</label>
+    <textarea id="command" placeholder="예: 오른쪽으로 30cm 이동해줘"></textarea>
+    <button id="sendBtn">명령 전송</button>
+    <div id="status"></div>
+  </main>
 
-    <div class="status" id="status"></div>
-  </div>
+  <footer>
+    <p>Project by InDawn (S.J Yoon)</p>
+  </footer>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <!-- Firebase SDK (compat for stability) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // 🧩 STEP 1: Replace with your Firebase project config
+    // ⚙️ Replace with your Firebase credentials
     const firebaseConfig = {
-      apiKey: "link_to_your_firebase_apiKey",
-      authDomain: "link_to_your_firebase_authDomain",
-      projectId: "link_to_your_firebase_projectId",
-      storageBucket: "link_to_your_firebase_storageBucket",
-      messagingSenderId: "link_to_your_firebase_messagingSenderId",
-      appId: "link_to_your_firebase_appId"
-    };
+  apiKey: "AIzaSyD4tKDu4g2T_7Hd7PXS85Nv_380JPPsPAI",
+  authDomain: "projectur-db.firebaseapp.com",
+  databaseURL: "https://projectur-db-default-rtdb.firebaseio.com",
+  projectId: "projectur-db",
+  storageBucket: "projectur-db.firebasestorage.app",
+  messagingSenderId: "473897594575",
+  appId: "1:473897594575:web:f0aa9fffda993a62c111ba",
+  measurementId: "G-Y6KB1JK1XW"
+};
 
-    // 🧠 Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 🎯 Handle input submission
-    const sendBtn = document.getElementById("sendBtn");
-    const userInput = document.getElementById("userInput");
+    const btn = document.getElementById("sendBtn");
+    const textarea = document.getElementById("command");
     const status = document.getElementById("status");
 
-    sendBtn.addEventListener("click", async () => {
-      const value = userInput.value.trim();
-      if (!value) {
-        status.textContent = "Please enter a command.";
-        status.className = "status fail";
+    btn.addEventListener("click", async () => {
+      const text = textarea.value.trim();
+      if (!text) {
+        status.textContent = "⚠️ 입력값이 비어 있습니다.";
+        status.style.color = "#ff6666";
         return;
       }
 
-      status.textContent = "Sending input...";
-      status.className = "status";
+      status.textContent = "⏳ 전송 중...";
+      status.style.color = "#aaa";
 
       try {
-        await db.collection("commands").add({
-          text: value,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        const ref = await db.collection("commands").add({
+          text,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        status.textContent = "✅ Success!";
-        status.className = "status success";
-        userInput.value = "";
-      } catch (error) {
-        console.error("Error adding document: ", error);
-        status.textContent = "❌ Failed: " + error.message;
-        status.className = "status fail";
+        status.textContent = "✅ 전송 완료! (ID: " + ref.id + ")";
+        status.style.color = "#00ffaa";
+        textarea.value = "";
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ 전송 실패: " + err.message;
+        status.style.color = "#ff6666";
       }
     });
   </script>
